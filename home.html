@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>370Z - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            width: 1600px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 120px;
+            background: #111;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #333;
+            padding: 40px 0;
+        }
+
+        .nav-btn {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px 0;
+            color: #777;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 142, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            color: #ff8e00;
+            background: rgba(255, 142, 0, 0.2);
+        }
+
+        .nav-btn i {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .nav-btn span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content Area - Dashboard */
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            color: #ff8e00;
+        }
+
+        .time-display {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .speed-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+
+        .speed {
+            font-size: 120px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .rpm-container {
+            margin-top: 40px;
+            height: 30px;
+            background: rgba(255, 142, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .rpm-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #ff8e00, #ff6600);
+            border-radius: 15px;
+            transition: width 0.1s linear;
+        }
+
+        .rpm-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .rpm-marker {
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 142, 0, 0.3);
+        }
+
+        .critical-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .indicator-value {
+            font-size: 24px;
+            margin-top: 5px;
+        }
+
+        .indicator-label {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+        }
+
+        .warning {
+            color: #ff3333;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="nav-btn active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='nav.html'">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Nav</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='climate.html'">
+                <i class="fas fa-thermometer-half"></i>
+                <span>Climate</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='media.html'">
+                <i class="fas fa-music"></i>
+                <span>Media</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='vehicle.html'">
+                <i class="fas fa-car"></i>
+                <span>Vehicle</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='settings.html'">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="dashboard">
+            <div class="time-display" id="time">4:30 PM</div>
+            
+            <div class="speed-display">
+                <div class="speed">
+                    <span id="speed-value">87</span>
+                </div>
+            </div>
+            
+            <div class="rpm-container">
+                <div class="rpm-bar" id="rpm-bar"></div>
+                <div class="rpm-markers">
+                    <div class="rpm-marker"></div>
+                    <div class="rpm-marker"></div>
+                    <div class="rpm-marker"></div>
+                    <div class="rpm-marker"></div>
+                    <div class="rpm-marker"></div>
+                </div>
+            </div>
+            
+            <div class="critical-indicators">
+                <div class="indicator">
+                    <i class="fas fa-temperature-high"></i>
+                    <div class="indicator-value" id="engine-temp">210°</div>
+                    <div class="indicator-label">Engine</div>
+                </div>
+                <div class="indicator">
+                    <i class="fas fa-oil-can"></i>
+                    <div class="indicator-value" id="oil-temp">185°</div>
+                    <div class="indicator-label">Oil</div>
+                </div>
+                <div class="indicator">
+                    <i class="fas fa-battery-three-quarters"></i>
+                    <div class="indicator-value" id="voltage">14.2V</div>
+                    <div class="indicator-label">Voltage</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            document.getElementById('time').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+        
+        // Simulate speed and RPM with more stable values
+        function simulateDriving() {
+            // Base values with less fluctuation
+            const baseSpeed = 87;
+            const speed = Math.min(Math.max(baseSpeed + (Math.random() * 2 - 1), 0), 160);
+            document.getElementById('speed-value').textContent = Math.round(speed);
+            
+            // RPM with less fluctuation
+            const rpm = Math.min(speed * 30 + (Math.random() * 50 - 25), 8000);
+            const rpmPercent = (rpm / 8000) * 100;
+            document.getElementById('rpm-bar').style.width = `${rpmPercent}%`;
+            
+            // More stable temperature readings
+            document.getElementById('engine-temp').textContent = 
+                `${Math.round(210 + (Math.random() * 2 - 1))}°`;
+            document.getElementById('oil-temp').textContent = 
+                `${Math.round(185 + (Math.random() * 2 - 1))}°`;
+            
+            // Stable voltage reading
+            document.getElementById('voltage').textContent = 
+                `${(14.2 + (Math.random() * 0.1 - 0.05)).toFixed(1)}V`;
+            
+            // Check for critical values
+            if (parseInt(document.getElementById('engine-temp').textContent) > 230) {
+                document.getElementById('engine-temp').classList.add('warning');
+            } else {
+                document.getElementById('engine-temp').classList.remove('warning');
+            }
+        }
+        
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 60000);
+        setInterval(simulateDriving, 1000); // Update less frequently for more stable readings
+    </script>
+</body>
+</html>
