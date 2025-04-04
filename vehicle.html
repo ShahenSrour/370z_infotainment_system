@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>370Z - Vehicle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            width: 1600px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 142, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 142, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 142, 0, 0.5);
+        }
+
+        /* Left Sidebar - RESTORED TO ORIGINAL STYLING */
+        .sidebar {
+            width: 120px;
+            background: #111;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #333;
+            padding: 40px 0;
+        }
+
+        .nav-btn {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px 0;
+            color: #777;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 142, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            color: #ff8e00;
+            background: rgba(255, 142, 0, 0.2);
+        }
+
+        .nav-btn i {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .nav-btn span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Vehicle Content */
+        .vehicle-container {
+            flex: 1;
+            display: flex;
+            padding: 30px;
+            color: #ff8e00;
+        }
+
+        .car-display {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border-right: 1px solid #333;
+            padding-right: 30px;
+        }
+
+        .car-image {
+            width: 250px;
+            height: 250px;
+            background-color: #222;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .car-image i {
+            font-size: 60px;
+            color: #444;
+        }
+
+        .car-model {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .car-year {
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .obd-status {
+            padding: 10px 20px;
+            background: rgba(255, 142, 0, 0.1);
+            border-radius: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .obd-status.connected {
+            background: rgba(0, 200, 0, 0.1);
+            color: #00ff00;
+        }
+
+        .diagnostic-data {
+            width: 60%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: #ff8e00;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .data-item {
+            background: rgba(255, 142, 0, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            font-size: 24px;
+        }
+
+        .data-unit {
+            font-size: 14px;
+            color: #777;
+            margin-left: 5px;
+        }
+
+        .warning {
+            color: #ff3333;
+        }
+
+        .normal {
+            color: #00ff00;
+        }
+
+        .trouble-codes {
+            margin-top: auto;
+        }
+
+        .codes-list {
+            background: rgba(255, 0, 0, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .code-item {
+            font-family: monospace;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 5px;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .no-codes {
+            color: #00ff00;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Sidebar - RESTORED TO ORIGINAL -->
+        <div class="sidebar">
+            <div class="nav-btn" onclick="window.location.href='home.html'">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='nav.html'">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Nav</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='climate.html'">
+                <i class="fas fa-thermometer-half"></i>
+                <span>Climate</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='media.html'">
+                <i class="fas fa-music"></i>
+                <span>Media</span>
+            </div>
+            <div class="nav-btn active">
+                <i class="fas fa-car"></i>
+                <span>Vehicle</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='settings.html'">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Main Vehicle Content -->
+        <div class="vehicle-container">
+            <!-- Car Display -->
+            <div class="car-display">
+                <div class="car-image">
+                    <!-- Replace with your actual image path -->
+                    <img src="your-car-image.jpg" alt="370Z OBD Connected">
+                    <!-- <i class="fas fa-car"></i> -->
+                </div>
+                <div class="car-model">NISSAN 370Z</div>
+                <div class="car-year">2022</div>
+                <div class="obd-status connected">OBD2 CONNECTED</div>
+            </div>
+
+            <!-- Diagnostic Data -->
+            <div class="diagnostic-data">
+                <div class="section-title">Vehicle Diagnostics</div>
+
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">Engine RPM</div>
+                        <div class="data-value"><span id="rpm-value">2,350</span><span class="data-unit">RPM</span>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Throttle Position</div>
+                        <div class="data-value"><span id="throttle-value">42</span><span class="data-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Coolant Temp</div>
+                        <div class="data-value"><span id="coolant-value">92</span><span class="data-unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Intake Temp</div>
+                        <div class="data-value"><span id="intake-value">38</span><span class="data-unit">°C</span></div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Fuel Level</div>
+                        <div class="data-value"><span id="fuel-value">65</span><span class="data-unit">%</span></div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Battery Voltage</div>
+                        <div class="data-value"><span id="voltage-value">14.2</span><span class="data-unit">V</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">System Status</div>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">Oil Pressure</div>
+                        <div class="data-value normal"><span id="oil-pressure-value">3.8</span><span
+                                class="data-unit">bar</span></div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">O2 Sensor</div>
+                        <div class="data-value normal"><span id="o2-value">0.85</span><span class="data-unit">V</span>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">MAF Rate</div>
+                        <div class="data-value"><span id="maf-value">6.2</span><span class="data-unit">g/s</span></div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Timing Advance</div>
+                        <div class="data-value"><span id="timing-value">12.5</span><span class="data-unit">°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title trouble-codes">Trouble Codes</div>
+                <div class="codes-list" id="codes-list">
+                    <div class="no-codes">NO ACTIVE CODES</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate OBD2 data updates
+        function updateOBDData() {
+            // Random fluctuations for demo
+            const rpm = Math.max(800, 2350 + (Math.random() * 500 - 250));
+            document.getElementById('rpm-value').textContent = Math.round(rpm).toLocaleString();
+
+            const throttle = Math.min(Math.max(42 + (Math.random() * 10 - 5), 0), 100);
+            document.getElementById('throttle-value').textContent = Math.round(throttle);
+
+            const coolant = Math.min(Math.max(92 + (Math.random() * 4 - 2), 60), 120);
+            document.getElementById('coolant-value').textContent = Math.round(coolant);
+
+            const intake = Math.min(Math.max(38 + (Math.random() * 4 - 2), 10), 50);
+            document.getElementById('intake-value').textContent = Math.round(intake);
+
+            // Slowly decrease fuel for demo
+            const fuelElement = document.getElementById('fuel-value');
+            let fuel = parseFloat(fuelElement.textContent);
+            fuel = Math.max(0, fuel - (Math.random() * 0.1));
+            fuelElement.textContent = Math.round(fuel);
+
+            // Voltage fluctuation
+            const voltage = (14.2 + (Math.random() * 0.2 - 0.1)).toFixed(1);
+            document.getElementById('voltage-value').textContent = voltage;
+
+            // Oil pressure
+            const oilPressure = (3.8 + (Math.random() * 0.2 - 0.1)).toFixed(1);
+            document.getElementById('oil-pressure-value').textContent = oilPressure;
+
+            // O2 sensor
+            const o2 = (0.85 + (Math.random() * 0.05 - 0.025)).toFixed(2);
+            document.getElementById('o2-value').textContent = o2;
+
+            // MAF rate
+            const maf = (6.2 + (Math.random() * 0.5 - 0.25)).toFixed(1);
+            document.getElementById('maf-value').textContent = maf;
+
+            // Timing advance
+            const timing = (12.5 + (Math.random() * 1 - 0.5)).toFixed(1);
+            document.getElementById('timing-value').textContent = timing;
+
+            // Randomly generate a trouble code (5% chance)
+            if (Math.random() < 0.05 && document.querySelectorAll('.code-item').length === 0) {
+                const codes = [
+                    "P0171 - System Too Lean (Bank 1)",
+                    "P0300 - Random/Multiple Cylinder Misfire",
+                    "P0420 - Catalyst System Efficiency Below Threshold",
+                    "P0128 - Coolant Thermostat (Coolant Temp Below Thermostat Regulating Temp)",
+                    "P0455 - Evaporative Emission System Leak Detected (Large Leak)"
+                ];
+                const randomCode = codes[Math.floor(Math.random() * codes.length)];
+
+                const codeElement = document.createElement('div');
+                codeElement.className = 'code-item';
+                codeElement.textContent = randomCode;
+
+                const codesList = document.getElementById('codes-list');
+                codesList.innerHTML = '';
+                codesList.appendChild(codeElement);
+            }
+        }
+
+        // Initialize and update every second
+        updateOBDData();
+        setInterval(updateOBDData, 1000);
+        // Add this script to enable drag-to-scroll functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const diagnosticData = document.querySelector('.diagnostic-data');
+            let isDragging = false;
+            let startY, scrollTop;
+
+            diagnosticData.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startY = e.pageY - diagnosticData.offsetTop;
+                scrollTop = diagnosticData.scrollTop;
+                diagnosticData.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const y = e.pageY - diagnosticData.offsetTop;
+                const walk = (y - startY) * 2; // Scroll speed multiplier
+                diagnosticData.scrollTop = scrollTop - walk;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                diagnosticData.style.cursor = 'default';
+            });
+
+            // Keep existing OBD data simulation
+            function updateOBDData() {
+                // ... (keep all your existing OBD data simulation code) ...
+            }
+
+            updateOBDData();
+            setInterval(updateOBDData, 1000);
+        });
+    </script>
+</body>
+
+</html>

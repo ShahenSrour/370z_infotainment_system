@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>370Z - Climate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            width: 1600px; /* Fixed width */
+            height: 600px; /* Fixed height */
+            overflow: hidden; /* Prevent scrollbars if content fits */
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 120px;
+            background: #111;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #333;
+            padding: 40px 0; /* Keep sidebar padding */
+        }
+
+        .nav-btn {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px 0;
+            color: #777;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 142, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            color: #ff8e00;
+            background: rgba(255, 142, 0, 0.2);
+        }
+
+        .nav-btn i {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .nav-btn span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Climate Content */
+        .climate-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* Reduced top/bottom padding */
+            padding: 20px 40px;
+            color: #ff8e00;
+        }
+
+        .temp-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Reduced margin */
+            margin-bottom: 25px;
+        }
+
+        .temp-slider {
+            width: 400px;
+            height: 20px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #add8e6, #ff4500);
+            border-radius: 10px;
+            outline: none;
+            margin: 0 30px;
+        }
+
+        .temp-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 142, 0, 0.8);
+        }
+         /* Style for Moz */
+        .temp-slider::-moz-range-thumb {
+             width: 40px;
+             height: 40px;
+             border-radius: 50%;
+             background: #fff;
+             cursor: pointer;
+             border: none;
+             box-shadow: 0 0 10px rgba(255, 142, 0, 0.8);
+        }
+
+
+        .temp-icon {
+            font-size: 30px;
+        }
+
+        #temp-icon-cold {
+            color: #add8e6;
+        }
+
+        #temp-icon-hot {
+            color: #ff4500;
+        }
+
+
+        /* --- Fan Control Area --- */
+        .fan-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+             /* Reduced margin */
+            margin-bottom: 25px;
+        }
+
+        .fan-visual {
+            width: 180px;
+            height: 180px;
+            border: 3px solid rgba(255, 142, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+             /* Reduced margin */
+            margin-bottom: 20px;
+        }
+
+        #fan-icon {
+            font-size: 90px;
+            color: #ff8e00;
+            transition: color 0.3s ease, transform 0.5s ease;
+        }
+
+        .fan-main-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+             /* Reduced margin */
+            margin-bottom: 20px;
+        }
+
+        .fan-speed-control {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .fan-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 142, 0, 0.1);
+            color: #ff8e00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .fan-btn:hover {
+            background: rgba(255, 142, 0, 0.2);
+            border-color: rgba(255, 142, 0, 0.3);
+        }
+
+        .fan-display {
+            width: 80px;
+            text-align: center;
+            font-size: 24px;
+            color: #ff8e00;
+        }
+
+        .power-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(100, 100, 100, 0.15);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 28px;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(150, 150, 150, 0.2);
+            /* No margin needed here as it's the last element in fan-control */
+        }
+
+        .power-btn:hover {
+             background: rgba(120, 120, 120, 0.25);
+             border-color: rgba(150, 150, 150, 0.4);
+        }
+
+        .power-btn.active {
+            background: rgba(255, 142, 0, 0.2);
+            color: #ff8e00;
+            border-color: rgba(255, 142, 0, 0.4);
+            box-shadow: 0 0 12px rgba(255, 142, 0, 0.3);
+        }
+         .power-btn.active:hover {
+             background: rgba(255, 142, 0, 0.3);
+             border-color: rgba(255, 142, 0, 0.6);
+         }
+        /* --- End Fan Control Area --- */
+
+
+        /* Secondary Controls */
+        .secondary-controls {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            /* No margin-bottom needed as it's the last element in the container */
+        }
+
+        .control-card {
+            width: 140px;
+            height: 120px; /* Keep height */
+            background: rgba(255, 142, 0, 0.05);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            padding: 10px;
+            color: #ff8e00;
+            border: 2px solid transparent;
+            word-wrap: break-word;
+        }
+
+        .control-card:hover {
+            background: rgba(255, 142, 0, 0.1);
+        }
+
+        .control-card.active {
+            background: rgba(255, 142, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 142, 0, 0.3);
+            border: 2px solid #ff8e00;
+        }
+
+        .control-card i {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .control-card span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        /* Keyframe animation for spinning (Reversed) */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(-360deg); /* Rotate counter-clockwise */
+            }
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+             <div class="nav-btn" onclick="window.location.href='home.html'">
+                 <i class="fas fa-home"></i>
+                 <span>Home</span>
+             </div>
+             <div class="nav-btn" onclick="window.location.href='nav.html'">
+                 <i class="fas fa-map-marked-alt"></i>
+                 <span>Nav</span>
+             </div>
+             <div class="nav-btn active">
+                 <i class="fas fa-thermometer-half"></i>
+                 <span>Climate</span>
+             </div>
+             <div class="nav-btn" onclick="window.location.href='media.html'">
+                 <i class="fas fa-music"></i>
+                 <span>Media</span>
+             </div>
+             <div class="nav-btn" onclick="window.location.href='vehicle.html'">
+                 <i class="fas fa-car"></i>
+                 <span>Vehicle</span>
+             </div>
+             <div class="nav-btn" onclick="window.location.href='settings.html'">
+                 <i class="fas fa-cog"></i>
+                 <span>Settings</span>
+             </div>
+        </div>
+
+        <div class="climate-container">
+            <div class="temp-control">
+                <i class="fas fa-snowflake temp-icon" id="temp-icon-cold"></i>
+                <input type="range" class="temp-slider" id="temp-slider" min="0" max="100" value="50">
+                <i class="fas fa-fire temp-icon" id="temp-icon-hot"></i>
+            </div>
+
+             <div class="fan-control">
+                 <div class="fan-visual" id="fan-visual-area">
+                     <i class="fas fa-fan" id="fan-icon"></i>
+                 </div>
+
+                 <div class="fan-main-controls">
+                     <div class="fan-speed-control">
+                         <div class="fan-btn" id="fan-down">
+                             <i class="fas fa-minus"></i>
+                         </div>
+                         <div class="fan-display" id="fan-display">3</div>
+                         <div class="fan-btn" id="fan-up">
+                             <i class="fas fa-plus"></i>
+                         </div>
+                     </div>
+                 </div>
+
+                 <div class="power-btn" id="power-btn">
+                     <i class="fas fa-power-off"></i>
+                 </div>
+             </div>
+             <div class="secondary-controls">
+                <div class="control-card" id="recirc-btn">
+                    <i class="fas fa-recycle"></i>
+                    <span>RECIRCULATE</span>
+                </div>
+                <div class="control-card" id="rear-defrost-btn">
+                    <i class="fas fa-car-side"></i> <span>REAR DEFROST</span>
+                </div>
+                <div class="control-card" id="seat-heat-btn">
+                    <i class="fas fa-chair"></i> <span>SEAT HEAT</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const powerBtn = document.getElementById('power-btn');
+        const tempSlider = document.getElementById('temp-slider');
+        const fanIcon = document.getElementById('fan-icon'); // Get the fan icon
+        const fanDisplay = document.getElementById('fan-display');
+        const fanDown = document.getElementById('fan-down');
+        const fanUp = document.getElementById('fan-up');
+        const recircBtn = document.getElementById('recirc-btn');
+        const rearDefrostBtn = document.getElementById('rear-defrost-btn');
+        const seatHeatBtn = document.getElementById('seat-heat-btn');
+
+        // State variables
+        let fanSpeed = 3;
+        let isOn = true;
+        let isRecirculating = false;
+        let isRearDefrostOn = false;
+        let isSeatHeatOn = false;
+
+        // --- Functions ---
+
+        /**
+         * Updates the fan speed display and rotation animation.
+         */
+        function updateFanDisplay() {
+            fanDisplay.textContent = fanSpeed;
+
+            if (fanSpeed > 0 && isOn) {
+                // Calculate animation duration based on speed (faster speed = shorter duration)
+                const duration = 3 / (0.5 + (fanSpeed * 0.5));
+                // Apply animation directly to the fan icon
+                fanIcon.style.animation = `spin ${duration}s linear infinite`;
+            } else {
+                // Stop animation
+                fanIcon.style.animation = 'none';
+            }
+        }
+
+        /**
+         * Updates the color of the fan icon based on the temperature slider.
+         */
+        function updateFanColor() {
+            const value = parseInt(tempSlider.value, 10); // Get slider value (0-100)
+            const t = value / 100; // Normalize to 0-1
+
+            // RGB values for cold (blue) and hot (red)
+            const coldColor = { r: 173, g: 216, b: 230 }; // #ADD8E6
+            const hotColor = { r: 255, g: 69, b: 0 };   // #FF4500
+
+            // Linear interpolation between cold and hot colors
+            const r = Math.round((1 - t) * coldColor.r + t * hotColor.r);
+            const g = Math.round((1 - t) * coldColor.g + t * hotColor.g);
+            const b = Math.round((1 - t) * coldColor.b + t * hotColor.b);
+
+            // Set the calculated color to the fan icon
+            fanIcon.style.color = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // --- Event Listeners ---
+
+        // Power button
+        powerBtn.addEventListener('click', () => {
+            isOn = !isOn;
+            powerBtn.classList.toggle('active', isOn);
+
+            if (!isOn) {
+                fanSpeed = 0; // Turn fan off visually
+            } else if (fanSpeed === 0) { // If turned on and speed was 0
+                 fanSpeed = 1; // Set to minimum speed
+            }
+            updateFanDisplay(); // Update speed display and animation
+        });
+
+        // Temperature slider input
+        tempSlider.addEventListener('input', updateFanColor); // Update color dynamically
+
+        // Fan speed down
+        fanDown.addEventListener('click', () => {
+            if (!isOn) return; // Only change if system is on
+            if (fanSpeed > 0) { // Allow decreasing to 0
+                fanSpeed--;
+                updateFanDisplay();
+            }
+        });
+
+        // Fan speed up
+        fanUp.addEventListener('click', () => {
+            if (!isOn) return; // Only change if system is on
+             if (fanSpeed < 7) { // Assuming max speed is 7
+                fanSpeed++;
+                updateFanDisplay();
+            }
+        });
+
+        // Recirculate button
+        recircBtn.addEventListener('click', () => {
+            isRecirculating = !isRecirculating;
+            recircBtn.classList.toggle('active', isRecirculating);
+        });
+
+        // Rear defrost button
+        rearDefrostBtn.addEventListener('click', () => {
+            isRearDefrostOn = !isRearDefrostOn;
+            rearDefrostBtn.classList.toggle('active', isRearDefrostOn);
+        });
+
+        // Seat heat button
+        seatHeatBtn.addEventListener('click', () => {
+            isSeatHeatOn = !isSeatHeatOn;
+            seatHeatBtn.classList.toggle('active', isSeatHeatOn);
+        });
+
+        // --- Initialization ---
+        updateFanDisplay(); // Set initial fan speed display/animation
+        updateFanColor();   // Set initial fan color based on slider value
+        // Set initial power button state visual (based on `isOn` variable)
+        powerBtn.classList.toggle('active', isOn);
+
+    </script>
+
+</body>
+</html>

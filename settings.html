@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>370Z - Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            width: 1600px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 120px;
+            background: #111;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #333;
+            padding: 40px 0;
+        }
+
+        .nav-btn {
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px 0;
+            color: #777;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 142, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            color: #ff8e00;
+            background: rgba(255, 142, 0, 0.2);
+        }
+
+        .nav-btn i {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .nav-btn span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Settings Content */
+        .settings-container {
+            flex: 1;
+            padding: 40px;
+            color: #ff8e00;
+            overflow-y: auto;
+            cursor: grab;
+        }
+
+        .settings-container:active {
+            cursor: grabbing;
+        }
+
+        .settings-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .settings-group {
+            margin-bottom: 40px;
+        }
+
+        .group-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ff8e00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 142, 0, 0.1);
+        }
+
+        .setting-label {
+            font-size: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #777;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: rgba(255, 142, 0, 0.3);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(30px);
+            background-color: #ff8e00;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        .dropdown {
+            padding: 8px 15px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #ff8e00;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .save-btn {
+            padding: 12px 30px;
+            background: rgba(255, 142, 0, 0.2);
+            color: #ff8e00;
+            border: 1px solid #ff8e00;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 30px;
+        }
+
+        .save-btn:hover {
+            background: rgba(255, 142, 0, 0.3);
+        }
+
+        /* Custom Scrollbar - Matching Vehicle Menu */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 142, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 142, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 142, 0, 0.5);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="nav-btn" onclick="window.location.href='home.html'">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='nav.html'">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Nav</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='climate.html'">
+                <i class="fas fa-thermometer-half"></i>
+                <span>Climate</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='media.html'">
+                <i class="fas fa-music"></i>
+                <span>Media</span>
+            </div>
+            <div class="nav-btn" onclick="window.location.href='vehicle.html'">
+                <i class="fas fa-car"></i>
+                <span>Vehicle</span>
+            </div>
+            <div class="nav-btn active">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="settings-container" id="settings-scroll">
+            <div class="settings-title">GUI Customization</div>
+
+            <div class="settings-group">
+                <div class="group-title">Theme Settings</div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Dark Mode</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Accent Color</div>
+                    <div class="color-picker">
+                        <div class="color-option selected" style="background-color: #ff8e00;" data-color="#ff8e00">
+                        </div>
+                        <div class="color-option" style="background-color: #00a8ff;" data-color="#00a8ff"></div>
+                        <div class="color-option" style="background-color: #00ffaa;" data-color="#00ffaa"></div>
+                        <div class="color-option" style="background-color: #ff3d3d;" data-color="#ff3d3d"></div>
+                        <div class="color-option" style="background-color: #aa00ff;" data-color="#aa00ff"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Background Intensity</div>
+                    <input type="range" min="0" max="100" value="80" class="dropdown">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-title">Display Settings</div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Animation Effects</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Font Size</div>
+                    <select class="dropdown">
+                        <option>Small</option>
+                        <option selected>Medium</option>
+                        <option>Large</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">UI Scaling</div>
+                    <select class="dropdown">
+                        <option>80%</option>
+                        <option selected>100%</option>
+                        <option>120%</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-title">System Settings</div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Auto Brightness</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">Screen Timeout</div>
+                    <select class="dropdown">
+                        <option>30 seconds</option>
+                        <option>1 minute</option>
+                        <option selected>5 minutes</option>
+                        <option>Never</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="save-btn">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Drag-to-scroll functionality
+        const settingsScroll = document.getElementById('settings-scroll');
+        let isDragging = false;
+        let startY, scrollTop;
+
+        settingsScroll.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startY = e.pageY - settingsScroll.offsetTop;
+            scrollTop = settingsScroll.scrollTop;
+            settingsScroll.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const y = e.pageY - settingsScroll.offsetTop;
+            const walk = (y - startY) * 2; // Scroll multiplier
+            settingsScroll.scrollTop = scrollTop - walk;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            settingsScroll.style.cursor = 'grab';
+        });
+
+        // Color selection
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function () {
+                document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                applyAccentColor(this.getAttribute('data-color'));
+            });
+        });
+
+        // Save button functionality
+        document.querySelector('.save-btn').addEventListener('click', function () {
+            saveSettings();
+            alert('Settings saved!');
+        });
+
+        // Apply settings to all pages
+        function applyAccentColor(color) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            localStorage.setItem('accentColor', color);
+        }
+
+        function saveSettings() {
+            const settings = {
+                darkMode: document.querySelector('.settings-group:nth-child(1) .toggle-switch input').checked,
+                accentColor: document.querySelector('.color-option.selected').getAttribute('data-color'),
+                backgroundIntensity: document.querySelector('input[type="range"]').value,
+                animations: document.querySelector('.settings-group:nth-child(2) .toggle-switch input').checked,
+                fontSize: document.querySelector('.settings-group:nth-child(2) .dropdown').value,
+                uiScaling: document.querySelector('.settings-group:nth-child(2) .dropdown:last-child').value,
+                autoBrightness: document.querySelector('.settings-group:nth-child(3) .toggle-switch input').checked,
+                screenTimeout: document.querySelector('.settings-group:nth-child(3) .dropdown').value
+            };
+            localStorage.setItem('370ZSettings', JSON.stringify(settings));
+        }
+
+        // Load settings
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('370ZSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.querySelector('.settings-group:nth-child(1) .toggle-switch input').checked = settings.darkMode;
+                document.querySelector(`.color-option[data-color="${settings.accentColor}"]`).click();
+                document.querySelector('input[type="range"]').value = settings.backgroundIntensity;
+                document.querySelector('.settings-group:nth-child(2) .toggle-switch input').checked = settings.animations;
+                document.querySelector('.settings-group:nth-child(2) .dropdown').value = settings.fontSize;
+                document.querySelector('.settings-group:nth-child(2) .dropdown:last-child').value = settings.uiScaling;
+                document.querySelector('.settings-group:nth-child(3) .toggle-switch input').checked = settings.autoBrightness;
+                document.querySelector('.settings-group:nth-child(3) .dropdown').value = settings.screenTimeout;
+            }
+        }
+
+        // Initialize
+        loadSettings();
+    </script>
+</body>
+
+</html>
