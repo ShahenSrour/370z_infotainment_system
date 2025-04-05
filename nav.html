@@ -1,457 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>370Z - Navigation</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Orbitron', sans-serif;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: #000;
-            color: #fff;
-            width: 1600px;
-            height: 600px;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Left Sidebar */
-        .sidebar {
-            width: 120px;
-            background: #111;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-right: 1px solid #333;
-            padding: 40px 0;
-        }
-
-        .nav-btn {
-            height: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin: 10px 0;
-            color: #777;
-            transition: all 0.2s;
-            border-radius: 8px;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 142, 0, 0.1);
-        }
-
-        .nav-btn.active {
-            color: #ff8e00;
-            background: rgba(255, 142, 0, 0.2);
-        }
-
-        .nav-btn i {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .nav-btn span {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Search Bar */
-        .search-container {
-            padding: 15px;
-            background: #1a1a1a;
-            position: relative;
-            z-index: 10;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: #333;
-            border-radius: 30px;
-            padding: 12px 20px;
-            border: 1px solid #444;
-        }
-
-        .search-bar i {
-            color: #ff8e00;
-            margin-right: 12px;
-            font-size: 18px;
-        }
-
-        .search-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 18px;
-            outline: none;
-            width: 100%;
-        }
-
-        .search-input::placeholder {
-            color: #777;
-        }
-
-        /* Map Container */
-        .map-container {
-            flex: 1;
-            background: #000000;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .map-view {
-            color: #777;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .map-view i {
-            font-size: 48px;
-            display: block;
-            margin-bottom: 15px;
-            color: #ff8e00;
-        }
-
-        .no-destination {
-            font-size: 28px;
-            color: #333;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 20px;
-            font-weight: bold;
-            text-shadow:
-                1px 1px 0 #ff8e00,
-                -1px -1px 0 #ff8e00,
-                1px -1px 0 #ff8e00,
-                -1px 1px 0 #ff8e00;
-        }
-
-        /* Improved Keyboard */
-        .keyboard-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #1a1a1a;
-            padding: 25px 30px 40px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            z-index: 5;
-            height: 400px;
-            /* Fixed height to prevent cut-off */
-            box-sizing: border-box;
-        }
-
-        .keyboard-overlay.visible {
-            transform: translateY(0);
-        }
-
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .keyboard-key {
-            width: 70px;
-            height: 60px;
-            background: #333;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 4px;
-            cursor: pointer;
-            font-size: 22px;
-            transition: all 0.1s;
-        }
-
-        .keyboard-key:active {
-            background: #ff8e00;
-            transform: scale(0.95);
-        }
-
-        .keyboard-key.space {
-            width: 500px;
-        }
-
-        .keyboard-key.function {
-            background: #444;
-            font-size: 18px;
-        }
-
-        .keyboard-key.enter {
-            background: #ff8e00;
-            color: #000;
-            font-weight: bold;
-            width: 100px;
-        }
-
-        .keyboard-key.backspace {
-            background: #1a1a1a;
-            border: 2px solid #ff8e00;
-            width: 100px;
-        }
-
-        .keyboard-key.shift {
-            width: 80px;
-        }
-
-        .keyboard-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            background: #333;
-            color: #ff8e00;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 1;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #ff8e00;
-            line-height: 1;
-        }
-
-        .keyboard-shift.active {
-            background: #ff8e00;
-            color: #000;
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>370Z - Navigation (Minimized)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;user-select:none;-webkit-tap-highlight-color:transparent;}
+body{background-color:#000;color:#fff;width:1600px;height:600px;overflow:hidden;}
+/* Transitions */
+.page-transition{position:fixed;top:0;left:0;right:0;bottom:0;background-color:#000;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+.page-transition.active{opacity:1;}
+.main-content-area{animation:fadeIn 0.5s ease forwards;opacity:0;}
+/* Layout */
+.container{display:flex;width:100%;height:100%;}
+/* Sidebar */
+.sidebar{width:120px;background:#111;height:100%;display:flex;flex-direction:column;justify-content:center;border-right:1px solid #333;padding:40px 0;transition:transform 0.4s ease;}
+.nav-btn{height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin:10px 0;color:#777;transition:all 0.2s;border-radius:8px;}
+.nav-btn:hover{background:rgba(255,142,0,0.1);}
+.nav-btn.active{color:#ff8e00;background:rgba(255,142,0,0.2);}
+.nav-btn i{font-size:28px;margin-bottom:8px;}
+.nav-btn span{font-size:12px;text-transform:uppercase;letter-spacing:1px;}
+/* Main Content (Nav) */
+.main-content{flex:1;display:flex;flex-direction:column;position:relative;opacity:0; /* Fade in target */ transition: opacity 0.5s ease;}
+/* Search */
+.search-container{padding:15px;background:#1a1a1a;position:relative;z-index:10;}
+.search-bar{display:flex;align-items:center;background:#333;border-radius:30px;padding:12px 20px;border:1px solid #444;}
+.search-bar i{color:#ff8e00;margin-right:12px;font-size:18px;}
+.search-input{flex:1;background:transparent;border:none;color:#fff;font-size:18px;outline:none;width:100%;}
+.search-input::placeholder{color:#777;}
+/* Map Area */
+.map-container{flex:1;background:#000000;position:relative;display:flex;align-items:center;justify-content:center;}
+.map-view{color:#777;font-size:24px;text-align:center;}
+.map-view i{font-size:48px;display:block;margin-bottom:15px;color:#ff8e00;}
+.no-destination{font-size:28px;color:#333;text-transform:uppercase;letter-spacing:2px;margin-top:20px;font-weight:bold;text-shadow:1px 1px 0 #ff8e00,-1px -1px 0 #ff8e00,1px -1px 0 #ff8e00,-1px 1px 0 #ff8e00;}
+/* Keyboard */
+.keyboard-overlay{position:absolute;bottom:0;left:0;width:100%;background:#1a1a1a;padding:25px 30px 40px;transform:translateY(100%);transition:transform 0.3s ease;z-index:5;height:400px;box-sizing:border-box;}
+.keyboard-overlay.visible{transform:translateY(0);}
+.keyboard-row{display:flex;justify-content:center;margin-bottom:10px;}
+.keyboard-key{width:70px;height:60px;background:#333;border-radius:6px;display:flex;align-items:center;justify-content:center;margin:0 4px;cursor:pointer;font-size:22px;transition:all 0.1s;}
+.keyboard-key:active{background:#ff8e00;transform:scale(0.95);}
+.keyboard-key.space{width:500px;}
+.keyboard-key.function{background:#444;font-size:18px;}
+.keyboard-key.enter{background:#ff8e00;color:#000;font-weight:bold;width:100px;}
+.keyboard-key.backspace{background:#1a1a1a;border:2px solid #ff8e00;width:100px;}
+.keyboard-key.shift{width:80px;}
+.keyboard-shift.active{background:#ff8e00;color:#000;}
+.keyboard-close{position:absolute;top:20px;right:30px;background:#333;color:#ff8e00;font-size:20px;cursor:pointer;z-index:1;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #ff8e00;line-height:1;}
+/* Animations */
+@keyframes fadeIn{to{opacity:1;}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
-    <div class="container">
-        <!-- Left Sidebar -->
-        <div class="sidebar">
-            <div class="nav-btn" onclick="window.location.href='home.html'">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-btn active">
-                <i class="fas fa-map-marked-alt"></i>
-                <span>Nav</span>
-            </div>
-            <div class="nav-btn" onclick="window.location.href='climate.html'">
-                <i class="fas fa-thermometer-half"></i>
-                <span>Climate</span>
-            </div>
-            <div class="nav-btn" onclick="window.location.href='media.html'">
-                <i class="fas fa-music"></i>
-                <span>Media</span>
-            </div>
-            <div class="nav-btn" onclick="window.location.href='vehicle.html'">
-                <i class="fas fa-car"></i>
-                <span>Vehicle</span>
-            </div>
-        </div>
-
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <div class="search-container">
-                <div class="search-bar" id="search-trigger">
-                    <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" placeholder="Enter destination...">
-                </div>
-            </div>
-
-            <div class="map-container">
-                <div class="map-view">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <div class="no-destination">NOWHERE TO GO BUT EVERYWHERE</div>
-                </div>
-            </div>
-
-            <!-- Improved Keyboard -->
-            <div class="keyboard-overlay" id="keyboard">
-                <div class="keyboard-close" id="keyboard-close">
-                    <i class="fas fa-times" style="margin-top: -1px;"></i>
-                </div>
-
-                <div class="keyboard-row">
-                    <div class="keyboard-key" data-key="1">1</div>
-                    <div class="keyboard-key" data-key="2">2</div>
-                    <div class="keyboard-key" data-key="3">3</div>
-                    <div class="keyboard-key" data-key="4">4</div>
-                    <div class="keyboard-key" data-key="5">5</div>
-                    <div class="keyboard-key" data-key="6">6</div>
-                    <div class="keyboard-key" data-key="7">7</div>
-                    <div class="keyboard-key" data-key="8">8</div>
-                    <div class="keyboard-key" data-key="9">9</div>
-                    <div class="keyboard-key" data-key="0">0</div>
-                </div>
-
-                <div class="keyboard-row">
-                    <div class="keyboard-key" data-key="Q">Q</div>
-                    <div class="keyboard-key" data-key="W">W</div>
-                    <div class="keyboard-key" data-key="E">E</div>
-                    <div class="keyboard-key" data-key="R">R</div>
-                    <div class="keyboard-key" data-key="T">T</div>
-                    <div class="keyboard-key" data-key="Y">Y</div>
-                    <div class="keyboard-key" data-key="U">U</div>
-                    <div class="keyboard-key" data-key="I">I</div>
-                    <div class="keyboard-key" data-key="O">O</div>
-                    <div class="keyboard-key" data-key="P">P</div>
-                </div>
-
-                <div class="keyboard-row">
-                    <div class="keyboard-key" data-key="A">A</div>
-                    <div class="keyboard-key" data-key="S">S</div>
-                    <div class="keyboard-key" data-key="D">D</div>
-                    <div class="keyboard-key" data-key="F">F</div>
-                    <div class="keyboard-key" data-key="G">G</div>
-                    <div class="keyboard-key" data-key="H">H</div>
-                    <div class="keyboard-key" data-key="J">J</div>
-                    <div class="keyboard-key" data-key="K">K</div>
-                    <div class="keyboard-key" data-key="L">L</div>
-                    <div class="keyboard-key backspace function" data-key="backspace"><i class="fas fa-backspace"></i>
-                    </div>
-                </div>
-
-                <div class="keyboard-row">
-                    <div class="keyboard-key shift function keyboard-shift" id="shift-key" data-key="shift"><i
-                            class="fas fa-arrow-up"></i></div>
-                    <div class="keyboard-key" data-key="Z">Z</div>
-                    <div class="keyboard-key" data-key="X">X</div>
-                    <div class="keyboard-key" data-key="C">C</div>
-                    <div class="keyboard-key" data-key="V">V</div>
-                    <div class="keyboard-key" data-key="B">B</div>
-                    <div class="keyboard-key" data-key="N">N</div>
-                    <div class="keyboard-key" data-key="M">M</div>
-                    <div class="keyboard-key enter function" data-key="enter">ENTER</div>
-                </div>
-
-                <div class="keyboard-row">
-                    <div class="keyboard-key function" data-key="123">123</div>
-                    <div class="keyboard-key space" data-key=" ">SPACE</div>
-                    <div class="keyboard-key function" data-key="comma">,</div>
-                    <div class="keyboard-key function" data-key="period">.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Keyboard functionality
-        const searchTrigger = document.getElementById('search-trigger');
-        const keyboard = document.getElementById('keyboard');
-        const keyboardClose = document.getElementById('keyboard-close');
-        const searchInput = document.querySelector('.search-input');
-        const shiftKey = document.getElementById('shift-key');
-
-        let isShiftActive = false;
-        let cursorPosition = 0;
-
-        // Show keyboard when search is clicked
-        searchTrigger.addEventListener('click', () => {
-            keyboard.classList.add('visible');
-            searchInput.focus();
-            cursorPosition = searchInput.value.length;
-        });
-
-        // Hide keyboard
-        keyboardClose.addEventListener('click', () => {
-            keyboard.classList.remove('visible');
-        });
-
-        // Shift key functionality
-        shiftKey.addEventListener('click', () => {
-            isShiftActive = !isShiftActive;
-            shiftKey.classList.toggle('active', isShiftActive);
-        });
-
-        // Handle cursor position changes
-        searchInput.addEventListener('click', () => {
-            cursorPosition = searchInput.selectionStart;
-        });
-
-        searchInput.addEventListener('keyup', () => {
-            cursorPosition = searchInput.selectionStart;
-        });
-
-        // Keyboard key presses
-        document.querySelectorAll('.keyboard-key').forEach(key => {
-            key.addEventListener('click', () => {
-                const keyValue = key.getAttribute('data-key');
-
-                if (keyValue === 'backspace') {
-                    if (cursorPosition > 0) {
-                        const currentValue = searchInput.value;
-                        searchInput.value = currentValue.substring(0, cursorPosition - 1) +
-                            currentValue.substring(cursorPosition);
-                        cursorPosition--;
-                    }
-                } else if (keyValue === 'enter') {
-                    keyboard.classList.remove('visible');
-                } else if (keyValue === ' ') {
-                    insertAtCursor(' ');
-                } else if (keyValue === 'shift') {
-                    // Shift handled separately
-                } else if (key.classList.contains('function')) {
-                    // Other function keys
-                    if (keyValue === 'comma') insertAtCursor(',');
-                    if (keyValue === 'period') insertAtCursor('.');
-                } else {
-                    insertAtCursor(isShiftActive ? keyValue : keyValue.toLowerCase());
-
-                    // Auto-disable shift after one character
-                    if (isShiftActive && keyValue.length === 1) {
-                        isShiftActive = false;
-                        shiftKey.classList.remove('active');
-                    }
-                }
-
-                // Update cursor position
-                searchInput.selectionStart = searchInput.selectionEnd = cursorPosition;
-
-                // Trigger input event
-                searchInput.dispatchEvent(new Event('input'));
-            });
-        });
-
-        function insertAtCursor(text) {
-            const currentValue = searchInput.value;
-            searchInput.value = currentValue.substring(0, cursorPosition) +
-                text +
-                currentValue.substring(cursorPosition);
-            cursorPosition += text.length;
-        }
-    </script>
+<div class="container">
+<div class="sidebar">
+<div class="nav-btn" onclick="window.location.href='home.html'"><i class="fas fa-home"></i><span>Home</span></div>
+<div class="nav-btn active"><i class="fas fa-map-marked-alt"></i><span>Nav</span></div>
+<div class="nav-btn" onclick="window.location.href='climate.html'"><i class="fas fa-thermometer-half"></i><span>Climate</span></div>
+<div class="nav-btn" onclick="window.location.href='media.html'"><i class="fas fa-music"></i><span>Media</span></div>
+<div class="nav-btn" onclick="window.location.href='vehicle.html'"><i class="fas fa-car"></i><span>Vehicle</span></div>
+</div>
+<div class="main-content">
+<div class="search-container"><div class="search-bar" id="search-trigger"><i class="fas fa-search"></i><input type="text" class="search-input" placeholder="Enter destination..."></div></div>
+<div class="map-container"><div class="map-view"><i class="fas fa-map-marked-alt"></i><div class="no-destination">NOWHERE TO GO BUT EVERYWHERE</div></div></div>
+<div class="keyboard-overlay" id="keyboard">
+<div class="keyboard-close" id="keyboard-close"><i class="fas fa-times" style="margin-top:-1px;"></i></div>
+<div class="keyboard-row"><div class="keyboard-key" data-key="1">1</div><div class="keyboard-key" data-key="2">2</div><div class="keyboard-key" data-key="3">3</div><div class="keyboard-key" data-key="4">4</div><div class="keyboard-key" data-key="5">5</div><div class="keyboard-key" data-key="6">6</div><div class="keyboard-key" data-key="7">7</div><div class="keyboard-key" data-key="8">8</div><div class="keyboard-key" data-key="9">9</div><div class="keyboard-key" data-key="0">0</div></div>
+<div class="keyboard-row"><div class="keyboard-key" data-key="Q">Q</div><div class="keyboard-key" data-key="W">W</div><div class="keyboard-key" data-key="E">E</div><div class="keyboard-key" data-key="R">R</div><div class="keyboard-key" data-key="T">T</div><div class="keyboard-key" data-key="Y">Y</div><div class="keyboard-key" data-key="U">U</div><div class="keyboard-key" data-key="I">I</div><div class="keyboard-key" data-key="O">O</div><div class="keyboard-key" data-key="P">P</div></div>
+<div class="keyboard-row"><div class="keyboard-key" data-key="A">A</div><div class="keyboard-key" data-key="S">S</div><div class="keyboard-key" data-key="D">D</div><div class="keyboard-key" data-key="F">F</div><div class="keyboard-key" data-key="G">G</div><div class="keyboard-key" data-key="H">H</div><div class="keyboard-key" data-key="J">J</div><div class="keyboard-key" data-key="K">K</div><div class="keyboard-key" data-key="L">L</div><div class="keyboard-key backspace function" data-key="backspace"><i class="fas fa-backspace"></i></div></div>
+<div class="keyboard-row"><div class="keyboard-key shift function keyboard-shift" id="shift-key" data-key="shift"><i class="fas fa-arrow-up"></i></div><div class="keyboard-key" data-key="Z">Z</div><div class="keyboard-key" data-key="X">X</div><div class="keyboard-key" data-key="C">C</div><div class="keyboard-key" data-key="V">V</div><div class="keyboard-key" data-key="B">B</div><div class="keyboard-key" data-key="N">N</div><div class="keyboard-key" data-key="M">M</div><div class="keyboard-key enter function" data-key="enter">ENTER</div></div>
+<div class="keyboard-row"><div class="keyboard-key function" data-key="123">123</div><div class="keyboard-key space" data-key=" ">SPACE</div><div class="keyboard-key function" data-key="comma">,</div><div class="keyboard-key function" data-key="period">.</div></div>
+</div>
+</div>
+</div>
+<script>
+// --- Script 1: Keyboard Logic ---
+const searchTrigger=document.getElementById('search-trigger');const keyboard=document.getElementById('keyboard');const keyboardClose=document.getElementById('keyboard-close');const searchInput=document.querySelector('.search-input');const shiftKey=document.getElementById('shift-key');let isShiftActive=false;let cursorPosition=0;searchTrigger.addEventListener('click',()=>{keyboard.classList.add('visible');searchInput.focus();cursorPosition=searchInput.value.length});keyboardClose.addEventListener('click',()=>{keyboard.classList.remove('visible')});shiftKey.addEventListener('click',()=>{isShiftActive=!isShiftActive;shiftKey.classList.toggle('active',isShiftActive)});searchInput.addEventListener('click',()=>{cursorPosition=searchInput.selectionStart});searchInput.addEventListener('keyup',()=>{cursorPosition=searchInput.selectionStart});document.querySelectorAll('.keyboard-key').forEach(e=>{e.addEventListener('click',()=>{const t=e.getAttribute('data-key');if(t==='backspace'){if(cursorPosition>0){const e=searchInput.value;searchInput.value=e.substring(0,cursorPosition-1)+e.substring(cursorPosition);cursorPosition--}}else if(t==='enter'){keyboard.classList.remove('visible')}else if(t===' '){insertAtCursor(' ')}else if(t==='shift'){}else if(e.classList.contains('function')){if(t==='comma')insertAtCursor(',');if(t==='period')insertAtCursor('.')}else{insertAtCursor(isShiftActive?t:t.toLowerCase());if(isShiftActive&&t.length===1){isShiftActive=false;shiftKey.classList.remove('active')}}searchInput.selectionStart=searchInput.selectionEnd=cursorPosition;searchInput.dispatchEvent(new Event('input'))})});function insertAtCursor(e){const t=searchInput.value;searchInput.value=t.substring(0,cursorPosition)+e+t.substring(cursorPosition);cursorPosition+=e.length}
+// --- Script 2: Transition Logic ---
+const transitionOverlay=document.createElement('div');transitionOverlay.className='page-transition active';document.body.prepend(transitionOverlay);setTimeout(()=>{document.querySelector('.main-content').style.opacity=1;setTimeout(()=>{transitionOverlay.classList.remove('active')},50)},50);document.querySelectorAll('.nav-btn').forEach(e=>{if(!e.classList.contains('active')){e.addEventListener('click',function(t){t.preventDefault();const n=this.getAttribute('onclick').match(/'([^']+)'/)[1];transitionOverlay.classList.add('active');setTimeout(()=>{window.location.href=n},500)})}});
+</script>
 </body>
-
 </html>

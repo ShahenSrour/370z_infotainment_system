@@ -1,435 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>370Z - Dashboard (Corrected)</title>
-    <style>
-        /* --- Original Styles --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Orbitron', sans-serif;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            /* Using original background color */
-            background-color: #000;
-            color: #fff; /* Original text color */
-            width: 1600px;
-            height: 600px;
-            overflow: hidden;
-            /* Use flex on body to place sidebar and dashboard */
-            display: flex;
-        }
-
-        /* Removed .container styles as body handles layout */
-
-        /* --- EXACT Original Left Sidebar Styles --- */
-        .sidebar {
-            width: 120px;
-            background: #111;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            /* Using original padding/justification */
-            justify-content: center;
-            border-right: 1px solid #333;
-            padding: 40px 0;
-            flex-shrink: 0; /* Prevent shrinking */
-        }
-
-        .nav-btn {
-            height: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin: 10px 0; /* Original Margin */
-            color: #777;
-            transition: all 0.2s; /* Original Transition */
-            border-radius: 8px; /* Original Radius */
-        }
-
-        .nav-btn:hover {
-            /* Original Hover */
-            background: rgba(255, 142, 0, 0.1);
-             /* Keep slightly brighter hover text for feedback */
-             color: #ffae40;
-        }
-
-        .nav-btn.active {
-            /* Original Active */
-            color: #ff8e00;
-            background: rgba(255, 142, 0, 0.2);
-        }
-
-        .nav-btn i {
-            font-size: 28px; /* Original Font Size */
-            margin-bottom: 8px; /* Original Margin */
-        }
-
-        .nav-btn span {
-            font-size: 12px; /* Original Font Size */
-            text-transform: uppercase;
-            letter-spacing: 1px; /* Original Spacing */
-        }
-        /* --- End of Original Sidebar Styles --- */
-
-
-        /* --- Enhanced Main Content Area (Red Box) Styles --- */
-        .dashboard {
-            flex-grow: 1; /* Take remaining space */
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 25px 40px; /* Adjusted padding */
-            /* Use a dark gradient background for depth */
-            background: linear-gradient(180deg, #000000 0%, #000000 100%);
-            color: #ff8e00; /* Main accent color */
-        }
-
-        /* Style for the container holding the time */
-        .top-bar {
-            display: flex;
-            justify-content: flex-end; /* Time to the right */
-            align-items: center;
-            margin-bottom: 20px; /* Space below time */
-            height: 40px; /* Give it some defined height */
-        }
-
-        /* Style for the time text itself */
-        .time-display {
-             font-size: 28px; /* Size like the image */
-             letter-spacing: 1.5px;
-             color: #ff8e00; /* Slightly dimmer color */
-             background: rgb(0, 0, 0); /* Subtle background */
-             padding: 5px 15px;
-             border-radius: 5px;
-        }
-
-        /* Central Gauge Area */
-        .gauge-cluster {
-            flex-grow: 1; /* Takes up vertical space */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Center content vertically */
-            text-align: center;
-            margin-top: -10px; /* Pull it up slightly */
-        }
-
-        /* Speed number and unit container */
-        .speed-display {
-             /* No specific styles needed here now */
-         }
-
-        /* Speed number */
-        .speed-display .speed-value {
-             font-size: 160px; /* Large font */
-             font-weight: 700;
-             line-height: 1; /* Tight line height */
-             text-shadow: 0 0 15px rgba(255, 142, 0, 0.5); /* Orange glow */
-             color: #ff8e00; /* Ensure correct color */
-         }
-         /* Speed unit (MPH) */
-         .speed-display .speed-unit {
-             font-size: 24px;
-             color: #aaa; /* Greyish color */
-             text-transform: uppercase;
-             margin-top: 10px; /* Pull closer to number */
-             display: block; /* Ensure it's on its own line */
-             font-weight: 600;
-         }
-
-        /* LED RPM Bar Container */
-        .rpm-led-bar {
-            width: 70%; /* Width relative to dashboard */
-            max-width: 600px; /* Max pixel width */
-            height: 25px; /* Height of the bar */
-            display: flex; /* Use flex for segments */
-            justify-content: space-between; /* Distribute segments */
-            margin: 35px auto 0 auto; /* Spacing and centering */
-            background: #222; /* Dark background */
-            border-radius: 15px; /* Rounded ends */
-            padding: 5px; /* Padding inside the bar */
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* Inner shadow */
-        }
-
-        /* Individual LED segment */
-        .rpm-segment {
-            flex-grow: 1; /* Segments share space */
-            height: 100%; /* Fill height of container */
-            background-color: #3a2f1f; /* Dim/off color */
-            margin: 0 2px; /* Spacing between segments */
-            border-radius: 5px; /* Rounded segment */
-            transition: background-color 0.05s linear; /* Fast transition */
-            box-shadow: 0 0 2px rgba(0,0,0,0.3); /* Subtle shadow */
-        }
-
-        /* Styles for active segments based on RPM level */
-        .rpm-segment.active { background-color: #ff8e00; box-shadow: 0 0 5px rgba(255, 142, 0, 0.6); }
-        .rpm-segment.high { background-color: #ff6600; box-shadow: 0 0 8px rgba(255, 102, 0, 0.7); }
-        .rpm-segment.critical { background-color: #ff3300; box-shadow: 0 0 10px rgba(255, 51, 0, 0.8); }
-
-        /* Container for the bottom indicators */
-        .critical-indicators {
-            display: flex;
-            justify-content: space-around; /* Distribute indicators evenly */
-            gap: 20px; /* Space between indicators */
-            margin-top: 40px; /* Space above indicators */
-            padding: 15px 0; /* Vertical padding */
-            background: rgba(0, 0, 0, 0.2); /* Subtle background */
-            border-radius: 10px; /* Rounded corners */
-            width: 70%; /* Match RPM bar width */
-            max-width: 600px; /* Max pixel width */
-            margin-left: auto; /* Center horizontally */
-            margin-right: auto; /* Center horizontally */
-            margin-bottom: 20px; /* Space at the bottom */
-        }
-
-        /* Individual indicator block */
-        .indicator {
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center content */
-            color: #ccc; /* Default text color */
-            background: rgb(0, 0, 0); /* Very subtle background */
-            padding: 10px 15px; /* Padding */
-            border-radius: 8px; /* Rounded corners */
-            min-width: 90px; /* Ensure minimum width */
-            text-align: center;
-        }
-
-        /* Icon within indicator */
-        .indicator i {
-            font-size: 36px; /* Icon size */
-            margin-bottom: 8px;
-            color: #ff8e00; /* Icon color */
-        }
-
-        /* Value text (temp, voltage) */
-        .indicator-value {
-            font-size: 24px; /* Value font size */
-            font-weight: 600;
-            color: #fff; /* White color for value */
-        }
-
-        /* Label text (Engine Temp, Oil Temp, etc.) */
-        .indicator-label {
-            font-size: 20px; /* Smaller label */
-            color: #888; /* Grey label */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 2px;
-        }
-
-        /* Warning Style applied to the .indicator div */
-        .indicator.warning .indicator-value,
-        .indicator.warning i {
-            color: #ff3333; /* Red warning color */
-            animation: blink 1s infinite;
-            text-shadow: 0 0 10px rgba(255, 51, 51, 0.7); /* Red glow */
-        }
-         .indicator.warning .indicator-label { color: #ff6666; } /* Lighter red label */
-
-
-        /* Blinking animation */
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        /* --- End of Enhanced Main Content Styles --- */
-
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>370Z - Dashboard (Minimized)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;user-select:none;-webkit-tap-highlight-color:transparent;}
+body{background-color:#000;color:#fff;width:1600px;height:600px;overflow:hidden;display:flex;}
+/* Transitions */
+.page-transition{position:fixed;top:0;left:0;right:0;bottom:0;background-color:#000;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+.page-transition.active{opacity:1;}
+.main-content-area{animation:fadeIn 0.5s ease forwards;opacity:0;}
+/* Sidebar */
+.sidebar{width:120px;background:#111;height:100%;display:flex;flex-direction:column;justify-content:center;border-right:1px solid #333;padding:40px 0;flex-shrink:0;transition:transform 0.4s ease;}
+.nav-btn{height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin:10px 0;color:#777;transition:all 0.2s;border-radius:8px;}
+.nav-btn:hover{background:rgba(255,142,0,0.1);color:#ffae40;}
+.nav-btn.active{color:#ff8e00;background:rgba(255,142,0,0.2);}
+.nav-btn i{font-size:28px;margin-bottom:8px;}
+.nav-btn span{font-size:12px;text-transform:uppercase;letter-spacing:1px;}
+/* Dashboard */
+.dashboard{flex-grow:1;display:flex;flex-direction:column;height:100%;padding:25px 40px;background:linear-gradient(180deg,#000000 0%,#000000 100%);color:#ff8e00;opacity:0; /* Fade in target */ transition: opacity 0.5s ease;}
+.top-bar{display:flex;justify-content:flex-end;align-items:center;margin-bottom:20px;height:40px;}
+.time-display{font-size:28px;letter-spacing:1.5px;color:#ff8e00;background:rgb(0,0,0);padding:5px 15px;border-radius:5px;}
+.gauge-cluster{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin-top:-10px;}
+.speed-display .speed-value{font-size:160px;font-weight:700;line-height:1;text-shadow:0 0 15px rgba(255,142,0,0.5);color:#ff8e00;}
+.speed-display .speed-unit{font-size:24px;color:#aaa;text-transform:uppercase;margin-top:10px;display:block;font-weight:600;}
+.rpm-led-bar{width:70%;max-width:600px;height:25px;display:flex;justify-content:space-between;margin:35px auto 0 auto;background:#222;border-radius:15px;padding:5px;box-shadow:inset 0 0 5px rgba(0,0,0,0.5);}
+.rpm-segment{flex-grow:1;height:100%;background-color:#3a2f1f;margin:0 2px;border-radius:5px;transition:background-color 0.05s linear;box-shadow:0 0 2px rgba(0,0,0,0.3);}
+.rpm-segment.active{background-color:#ff8e00;box-shadow:0 0 5px rgba(255,142,0,0.6);}
+.rpm-segment.high{background-color:#ff6600;box-shadow:0 0 8px rgba(255,102,0,0.7);}
+.rpm-segment.critical{background-color:#ff3300;box-shadow:0 0 10px rgba(255,51,0,0.8);}
+.critical-indicators{display:flex;justify-content:space-around;gap:20px;margin-top:40px;padding:15px 0;background:rgba(0,0,0,0.2);border-radius:10px;width:70%;max-width:600px;margin-left:auto;margin-right:auto;margin-bottom:20px;}
+.indicator{display:flex;flex-direction:column;align-items:center;color:#ccc;background:rgb(0,0,0);padding:10px 15px;border-radius:8px;min-width:90px;text-align:center;}
+.indicator i{font-size:36px;margin-bottom:8px;color:#ff8e00;}
+.indicator-value{font-size:24px;font-weight:600;color:#fff;}
+.indicator-label{font-size:20px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+/* Warning Styles */
+.indicator.warning .indicator-value,.indicator.warning i{color:#ff3333;animation:blink 1s infinite;text-shadow:0 0 10px rgba(255,51,51,0.7);}
+.indicator.warning .indicator-label{color:#ff6666;}
+/* Animations */
+@keyframes fadeIn{to{opacity:1;}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.6;}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
-    <div class="sidebar">
-        <div class="nav-btn active"> <i class="fas fa-home"></i>
-            <span>Home</span>
-        </div>
-        <div class="nav-btn" onclick="window.location.href='nav.html'">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>Nav</span>
-        </div>
-        <div class="nav-btn" onclick="window.location.href='climate.html'">
-            <i class="fas fa-thermometer-half"></i>
-            <span>Climate</span>
-        </div>
-        <div class="nav-btn" onclick="window.location.href='media.html'">
-            <i class="fas fa-music"></i>
-            <span>Media</span>
-        </div>
-        <div class="nav-btn" onclick="window.location.href='vehicle.html'">
-            <i class="fas fa-car"></i>
-            <span>Vehicle</span>
-        </div>
-    </div>
-
-    <div class="dashboard">
-        <div class="top-bar">
-            <div class="time-display" id="time">12:53 AM</div> </div>
-
-        <div class="gauge-cluster">
-            <div class="speed-display">
-                <span class="speed-value" id="speed-value">65</span> <span class="speed-unit">KMPH</span>
-            </div>
-        </div>
-
-        <div class="rpm-led-bar" id="rpm-led-bar">
-            </div>
-
-        <div class="critical-indicators">
-            <div class="indicator" id="indicator-engine">
-                <i class="fas fa-temperature-high"></i>
-                <div class="indicator-value" id="engine-temp">210°F</div> <div class="indicator-label">Engine Temp</div>
-            </div>
-            <div class="indicator" id="indicator-oil">
-                <i class="fas fa-oil-can"></i>
-                <div class="indicator-value" id="oil-temp">186°F</div> <div class="indicator-label">Oil Temp</div>
-            </div>
-            <div class="indicator" id="indicator-voltage">
-                 <i class="fas fa-battery-three-quarters"></i>
-                <div class="indicator-value" id="voltage">14.1V</div> <div class="indicator-label">Voltage</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- Constants and DOM Elements ---
-        const MAX_RPM = 8000;
-        const NUM_RPM_SEGMENTS = 40; // Number of LED segments
-
-        const timeDisplay = document.getElementById('time');
-        const speedValueDisplay = document.getElementById('speed-value');
-        const rpmBarContainer = document.getElementById('rpm-led-bar');
-        // Get original indicator value elements by ID
-        const engineTempDisplay = document.getElementById('engine-temp');
-        const oilTempDisplay = document.getElementById('oil-temp');
-        const voltageDisplay = document.getElementById('voltage');
-        // Get parent indicator divs for applying warning class
-        const engineIndicator = document.getElementById('indicator-engine');
-        const oilIndicator = document.getElementById('indicator-oil');
-        const voltageIndicator = document.getElementById('indicator-voltage');
-
-        // --- Create RPM Segments ---
-        function createRPMSegments() {
-            rpmBarContainer.innerHTML = ''; // Clear just in case
-            for (let i = 0; i < NUM_RPM_SEGMENTS; i++) {
-                const segment = document.createElement('div');
-                segment.classList.add('rpm-segment');
-                rpmBarContainer.appendChild(segment);
-            }
-        }
-
-        // --- Update Time ---
-        function updateTime() {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // Handle midnight
-            timeDisplay.textContent = `${hours}:${minutes} ${ampm}`;
-        }
-
-        // --- Update RPM LED Bar ---
-        function updateRPMBar(rpm) {
-            // Ensure rpm is a number and within bounds
-            rpm = Math.max(0, Math.min(Number(rpm) || 0, MAX_RPM));
-            const rpmPercent = (rpm / MAX_RPM) * 100;
-            const segmentsToActivate = Math.floor((rpmPercent / 100) * NUM_RPM_SEGMENTS);
-            const segments = rpmBarContainer.children;
-
-            for (let i = 0; i < NUM_RPM_SEGMENTS; i++) {
-                // Reset classes first
-                segments[i].classList.remove('active', 'high', 'critical');
-                // Add appropriate class if segment should be active
-                if (i < segmentsToActivate) {
-                    if (i >= NUM_RPM_SEGMENTS * 0.85) { // Top 15% = critical
-                       segments[i].classList.add('critical');
-                    } else if (i >= NUM_RPM_SEGMENTS * 0.65) { // 65% to 85% = high
-                        segments[i].classList.add('high');
-                    } else { // Below 65% = active
-                        segments[i].classList.add('active');
-                    }
-                }
-            }
-        }
-
-        // --- Simulate Driving Data (Refined Simulation) ---
-        let currentSpeed = 65; // Start with value from image
-        let currentEngineTemp = 210;
-        let currentOilTemp = 186;
-        let currentVoltage = 14.1;
-        let currentRPM = 2500; // Estimated RPM for 65 MPH
-
-        function simulateDriving() {
-            // Simulate slight speed changes
-            currentSpeed += (Math.random() * 4 - 2); // +/- 2 variation
-            currentSpeed = Math.max(0, Math.min(currentSpeed, 160)); // Clamp speed
-            speedValueDisplay.textContent = Math.round(currentSpeed);
-
-            // Simulate RPM based on speed with noise
-            // Adjust factor to make RPM look reasonable for the speed
-            currentRPM = currentSpeed * 30 + (Math.random() * 400 - 200) + 1000;
-            currentRPM = Math.max(800, Math.min(currentRPM, MAX_RPM)); // Clamp RPM
-            updateRPMBar(currentRPM);
-
-            // Simulate slight temperature/voltage changes around current values
-            currentEngineTemp += (Math.random() * 1 - 0.5);
-            currentEngineTemp = Math.max(180, Math.min(currentEngineTemp, 250)); // Reasonable bounds
-            engineTempDisplay.textContent = `${Math.round(currentEngineTemp)}°F`;
-
-            currentOilTemp += (Math.random() * 1 - 0.5);
-            currentOilTemp = Math.max(160, Math.min(currentOilTemp, 260)); // Reasonable bounds
-            oilTempDisplay.textContent = `${Math.round(currentOilTemp)}°F`;
-
-            currentVoltage += (Math.random() * 0.1 - 0.05);
-            currentVoltage = Math.max(11.5, Math.min(currentVoltage, 15.0)); // Reasonable bounds
-            voltageDisplay.textContent = `${currentVoltage.toFixed(1)}V`;
-
-            // --- Check for Critical Values ---
-            const engineTempWarningThreshold = 235; // Example threshold
-            if (currentEngineTemp > engineTempWarningThreshold) {
-                engineIndicator.classList.add('warning');
-            } else {
-                engineIndicator.classList.remove('warning');
-            }
-
-            const oilTempWarningThreshold = 245; // Example threshold
-            if (currentOilTemp > oilTempWarningThreshold) {
-                 oilIndicator.classList.add('warning');
-             } else {
-                 oilIndicator.classList.remove('warning');
-             }
-
-            const lowVoltageThreshold = 12.0;
-            const highVoltageThreshold = 14.8; // Example thresholds
-             if (currentVoltage < lowVoltageThreshold || currentVoltage > highVoltageThreshold) {
-                 voltageIndicator.classList.add('warning');
-             } else {
-                 voltageIndicator.classList.remove('warning');
-             }
-        }
-
-        // --- Initialization ---
-        createRPMSegments(); // Create the LEDs first
-        updateTime();        // Set initial time
-        // Set initial display values from defaults (already in HTML)
-        updateRPMBar(currentRPM); // Set initial RPM bar state
-        // Start simulation intervals
-        setInterval(updateTime, 30000); // Update time every 30 seconds
-        setInterval(simulateDriving, 300); // Update driving data periodically
-
-    </script>
+<div class="sidebar">
+<div class="nav-btn active"><i class="fas fa-home"></i><span>Home</span></div>
+<div class="nav-btn" onclick="window.location.href='nav.html'"><i class="fas fa-map-marked-alt"></i><span>Nav</span></div>
+<div class="nav-btn" onclick="window.location.href='climate.html'"><i class="fas fa-thermometer-half"></i><span>Climate</span></div>
+<div class="nav-btn" onclick="window.location.href='media.html'"><i class="fas fa-music"></i><span>Media</span></div>
+<div class="nav-btn" onclick="window.location.href='vehicle.html'"><i class="fas fa-car"></i><span>Vehicle</span></div>
+</div>
+<div class="dashboard">
+<div class="top-bar"><div class="time-display" id="time">12:53 AM</div></div>
+<div class="gauge-cluster"><div class="speed-display"><span class="speed-value" id="speed-value">65</span><span class="speed-unit">KMPH</span></div></div>
+<div class="rpm-led-bar" id="rpm-led-bar"></div>
+<div class="critical-indicators">
+<div class="indicator" id="indicator-engine"><i class="fas fa-temperature-high"></i><div class="indicator-value" id="engine-temp">210°F</div><div class="indicator-label">Engine Temp</div></div>
+<div class="indicator" id="indicator-oil"><i class="fas fa-oil-can"></i><div class="indicator-value" id="oil-temp">186°F</div><div class="indicator-label">Oil Temp</div></div>
+<div class="indicator" id="indicator-voltage"><i class="fas fa-battery-three-quarters"></i><div class="indicator-value" id="voltage">14.1V</div><div class="indicator-label">Voltage</div></div>
+</div>
+</div>
+<script>
+// --- Script 1: Dashboard Logic ---
+const MAX_RPM=8000;const NUM_RPM_SEGMENTS=40;const timeDisplay=document.getElementById('time');const speedValueDisplay=document.getElementById('speed-value');const rpmBarContainer=document.getElementById('rpm-led-bar');const engineTempDisplay=document.getElementById('engine-temp');const oilTempDisplay=document.getElementById('oil-temp');const voltageDisplay=document.getElementById('voltage');const engineIndicator=document.getElementById('indicator-engine');const oilIndicator=document.getElementById('indicator-oil');const voltageIndicator=document.getElementById('indicator-voltage');function createRPMSegments(){rpmBarContainer.innerHTML='';for(let e=0;e<NUM_RPM_SEGMENTS;e++){const t=document.createElement('div');t.classList.add('rpm-segment');rpmBarContainer.appendChild(t)}}function updateTime(){const e=new Date();let t=e.getHours();const n=e.getMinutes().toString().padStart(2,'0');const o=t>=12?'PM':'AM';t=t%12;t=t?t:12;timeDisplay.textContent=`${t}:${n} ${o}`}function updateRPMBar(e){e=Math.max(0,Math.min(Number(e)||0,MAX_RPM));const t=(e/MAX_RPM)*100;const n=Math.floor(t/100*NUM_RPM_SEGMENTS);const o=rpmBarContainer.children;for(let c=0;c<NUM_RPM_SEGMENTS;c++){o[c].classList.remove('active','high','critical');if(c<n){if(c>=NUM_RPM_SEGMENTS*0.85){o[c].classList.add('critical')}else if(c>=NUM_RPM_SEGMENTS*0.65){o[c].classList.add('high')}else{o[c].classList.add('active')}}}}let currentSpeed=65;let currentEngineTemp=210;let currentOilTemp=186;let currentVoltage=14.1;let currentRPM=2500;function simulateDriving(){currentSpeed+=Math.random()*4-2;currentSpeed=Math.max(0,Math.min(currentSpeed,160));speedValueDisplay.textContent=Math.round(currentSpeed);currentRPM=currentSpeed*30+Math.random()*400-200+1000;currentRPM=Math.max(800,Math.min(currentRPM,MAX_RPM));updateRPMBar(currentRPM);currentEngineTemp+=Math.random()*1-0.5;currentEngineTemp=Math.max(180,Math.min(currentEngineTemp,250));engineTempDisplay.textContent=`${Math.round(currentEngineTemp)}°F`;currentOilTemp+=Math.random()*1-0.5;currentOilTemp=Math.max(160,Math.min(currentOilTemp,260));oilTempDisplay.textContent=`${Math.round(currentOilTemp)}°F`;currentVoltage+=Math.random()*0.1-0.05;currentVoltage=Math.max(11.5,Math.min(currentVoltage,15));voltageDisplay.textContent=`${currentVoltage.toFixed(1)}V`;const e=235;if(currentEngineTemp>e){engineIndicator.classList.add('warning')}else{engineIndicator.classList.remove('warning')}const t=245;if(currentOilTemp>t){oilIndicator.classList.add('warning')}else{oilIndicator.classList.remove('warning')}const n=12;const o=14.8;if(currentVoltage<n||currentVoltage>o){voltageIndicator.classList.add('warning')}else{voltageIndicator.classList.remove('warning')}}createRPMSegments();updateTime();updateRPMBar(currentRPM);setInterval(updateTime,30000);setInterval(simulateDriving,300);
+// --- Script 2: Transition Logic ---
+const transitionOverlay=document.createElement('div');transitionOverlay.className='page-transition active';document.body.prepend(transitionOverlay);setTimeout(()=>{document.querySelector('.dashboard').style.opacity=1;setTimeout(()=>{transitionOverlay.classList.remove('active')},50)},50);document.querySelectorAll('.nav-btn').forEach(e=>{if(!e.classList.contains('active')){e.addEventListener('click',function(t){t.preventDefault();const n=this.getAttribute('onclick').match(/'([^']+)'/)[1];transitionOverlay.classList.add('active');setTimeout(()=>{window.location.href=n},500)})}});
+</script>
 </body>
 </html>
